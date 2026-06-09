@@ -27,6 +27,18 @@ def ensure_directory_exists(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+def get_txt_files(directory):
+    """Lists and naturally sorts TXT files in a given directory."""
+    if not os.path.exists(directory):
+        return []
+
+    files = [
+        f for f in os.listdir(directory)
+        if f.lower().endswith('.txt')
+    ]
+    files.sort(key=natural_sort_key)
+    return files
+
 def get_next_output_path(outputs_dir, base_name="combined_text", extension=".txt"):
     """Determines the next non-conflicting output file path in the outputs directory."""
     ensure_directory_exists(outputs_dir)
