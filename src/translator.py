@@ -73,7 +73,6 @@ class OllamaTranslator:
         if interrupted:
             notice = (
                 f"\n\n---\n\n"
-                f"[ÇEVIRI YARIDA KESİLDİ — {len(translated_parts)}/{total} parça tamamlandı]\n"
                 f"[TRANSLATION INTERRUPTED — {len(translated_parts)}/{total} chunks completed]"
             )
             result = result + notice
@@ -83,7 +82,7 @@ class OllamaTranslator:
 
         if interrupted:
             raise KeyboardInterrupt(
-                f"Çeviri durduruldu. {len(translated_parts)}/{total} parça kaydedildi → {output_path}"
+                f"Translation interrupted. {len(translated_parts)}/{total} chunks saved -> {output_path}"
             )
 
         return len(result)
@@ -97,9 +96,8 @@ class OllamaTranslator:
         prompt = (
             f"Translate the following text to {target_lang}. "
             "Output ONLY the translated text, with no explanations, notes, prefixes, or commentary. "
-            "Use natural, grammatically correct Turkish. "
-            "Pay close attention to Turkish grammar rules, especially genitive/possessive suffixes (e.g. 'iyiliğin' not 'iyilikin'), "
-            "vowel harmony, and proper word endings. Do NOT repeat any word or phrase.\n\n"
+            f"Use natural, grammatically correct {target_lang}. "
+            "Do NOT repeat any word or phrase.\n\n"
             f"{text}"
         )
 

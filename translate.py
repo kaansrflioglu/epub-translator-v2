@@ -53,7 +53,7 @@ def build_output_path(outputs_dir: str, source_name: str, target_lang: str) -> s
 def progress_logger(current: int, total: int, preview: str):
     bar_len = 30
     filled = int(bar_len * current / total)
-    bar = "█" * filled + "░" * (bar_len - filled)
+    bar = "#" * filled + "-" * (bar_len - filled)
     print(f"\r  [{bar}] {current}/{total}  {preview[:50]:<50}", end="", flush=True)
 
 
@@ -92,7 +92,7 @@ def main():
             return
 
     # --- Translate ---
-    print(f"\nStarting translation → {target_lang}  (model: {model})")
+    print(f"\nStarting translation -> {target_lang}  (model: {model})")
     print(f"Input  : {input_path}")
     print(f"Output : {output_path}\n")
 
@@ -106,15 +106,15 @@ def main():
             progress_callback=progress_logger,
         )
     except KeyboardInterrupt as ki:
-        print(f"\n\n⚠️  Çeviri durduruldu. Tamamlanan kısım kaydedildi:")
+        print(f"\n\nWARNING: Translation interrupted. Completed parts saved:")
         print(f"  --> {output_path}")
         return
     except Exception as exc:
-        print(f"\n\nHata: {exc}")
-        print("\nSorun giderme:")
-        print("  • Ollama'nın çalıştığından emin olun:  ollama serve")
-        print(f"  • Modelin indirildiğinden emin olun:   ollama pull {model}")
-        print("  • 11434 portunun erişilebilir olduğunu kontrol edin.")
+        print(f"\n\nError: {exc}")
+        print("\nTroubleshooting:")
+        print("  - Make sure Ollama is running:  ollama serve")
+        print(f"  - Make sure the model is downloaded:   ollama pull {model}")
+        print("  - Check that port 11434 is accessible.")
         return
 
     print(f"\n\nDone! {total_chars:,} characters written to:")
