@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -32,9 +33,36 @@ def ask_target_language() -> str:
     return raw if raw else "English"
 
 
-def ask_model() -> str:
-    raw = input("Ollama model to use [default: llama3]: ").strip()
-    return raw if raw else "llama3"
+def ask_model(default_model: str = "llama3") -> str:
+    raw = input(f"Ollama model to use [default: {default_model}]: ").strip()
+    return raw if raw else default_model
+
+
+def ask_genre(prompt_templates: dict, default_genre: str = "fiction") -> str:
+    """Prompts the user to pick a book genre for optimized translation prompts."""
+    if not prompt_templates:
+        return default_genre
+
+    genre_keys = list(prompt_templates.keys())
+    default_key = default_genre if default_genre in prompt_templates else genre_keys[0]
+    default_label = prompt_templates[default_key]["label"]
+
+    print("\nSelect book genre for optimized translation:\n")
+    for i, key in enumerate(genre_keys, start=1):
+        g = prompt_templates[key]
+        marker = " (default)" if key == default_key else ""
+        print(f"  [{i}] {g['label']}{marker}")
+        print(f"      {g['description']}")
+
+    while True:
+        raw = input(f"\nGenre number [default: {default_label}]: ").strip()
+        if not raw:
+            return default_key
+        if raw.isdigit() and 1 <= int(raw) <= len(genre_keys):
+            selected = genre_keys[int(raw) - 1]
+            print(f"  Using prompt template: {prompt_templates[selected]['label']}")
+            return selected
+        print("  Invalid input — please enter a number from the list.")
 
 
 def build_output_path(outputs_dir: str, source_name: str, target_lang: str) -> str:
@@ -42,7 +70,7 @@ def build_output_path(outputs_dir: str, source_name: str, target_lang: str) -> s
     Derives the output file path for a translation.
 
     Example:
-        combined_text.txt  →  combined_text_translated_english.txt
+        combined_text.txt  ->  combined_text_translated_english.txt
     """
     base, _ = os.path.splitext(source_name)
     lang_slug = target_lang.lower().replace(" ", "_")
@@ -68,6 +96,9 @@ def main():
     ensure_directory_exists(outputs_dir)
     txt_files = get_txt_files(outputs_dir)
 
+    # Exclude already-translated output files so the user only picks source files
+    txt_files = [f for f in txt_files if "_translated_" not in f]
+
     if not txt_files:
         print("No TXT files found in 'outputs/'. Run extract_text.py first.")
         return
@@ -82,7 +113,24 @@ def main():
 
     # --- Options ---
     target_lang = ask_target_language()
-    model = ask_model()
+
+    # Load config once to get model default and genre list
+    config = {}
+    config_path = os.path.join(current_dir, "config.json")
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                config = json.load(f)
+        except Exception:
+            pass
+
+    default_model = config.get("ollama", {}).get("model", "llama3")
+    model = ask_model(default_model)
+
+    prompt_templates = config.get("prompt_templates", {})
+    default_genre = config.get("default_genre", "fiction")
+    genre = ask_genre(prompt_templates, default_genre)
+
     output_path = build_output_path(outputs_dir, chosen_name, target_lang)
 
     if os.path.exists(output_path):
@@ -96,7 +144,7 @@ def main():
     print(f"Input  : {input_path}")
     print(f"Output : {output_path}\n")
 
-    translator = OllamaTranslator(model=model)
+    translator = OllamaTranslator(model=model, genre=genre)
 
     try:
         total_chars = translator.translate_file(

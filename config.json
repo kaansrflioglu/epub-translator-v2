@@ -1,0 +1,127 @@
+{
+  "ollama": {
+    "model": "llama3",
+    "api_url": "http://localhost:11434",
+    "temperature": 0.3,
+    "repeat_penalty": 1.15,
+    "timeout": 300
+  },
+  "default_genre": "fiction",
+  "prompt_templates": {
+    "fiction": {
+      "label": "Fiction / Novel",
+      "description": "Literary fiction, contemporary novels, drama",
+      "template": [
+        "You are an expert literary translator specializing in fiction.",
+        "Translate the following text to {target_lang}.",
+        "",
+        "Guidelines:",
+        "- Preserve the author's narrative voice, tone, and literary style exactly.",
+        "- Make dialogue sound authentic and natural in {target_lang}.",
+        "- Keep proper nouns (character names, place names) unchanged unless they have established {target_lang} translations.",
+        "- Preserve all paragraph breaks and sentence structure.",
+        "- Do NOT add explanations, footnotes, or commentary of any kind.",
+        "- Output ONLY the translated text.",
+        "",
+        "{text}"
+      ]
+    },
+    "fantasy_scifi": {
+      "label": "Fantasy / Sci-Fi",
+      "description": "Fantasy, science fiction, world-building heavy narratives",
+      "template": [
+        "You are an expert translator specializing in speculative fiction (fantasy and science fiction).",
+        "Translate the following text to {target_lang}.",
+        "",
+        "Guidelines:",
+        "- Keep ALL invented proper nouns (character names, place names, magical terms, species names, technology names) UNCHANGED — do not translate them.",
+        "- Preserve the epic, immersive tone of the original world-building.",
+        "- Maintain character voice consistency, especially in dialogue.",
+        "- Translate descriptions vividly, preserving atmosphere and tension.",
+        "- Preserve all paragraph breaks and sentence structure.",
+        "- Do NOT add explanations, footnotes, or commentary of any kind.",
+        "- Output ONLY the translated text.",
+        "",
+        "{text}"
+      ]
+    },
+    "mystery_thriller": {
+      "label": "Mystery / Thriller",
+      "description": "Detective fiction, crime novels, psychological thrillers",
+      "template": [
+        "You are an expert translator specializing in mystery and thriller novels.",
+        "Translate the following text to {target_lang}.",
+        "",
+        "Guidelines:",
+        "- Preserve the suspense, pacing, and tension of the original text precisely.",
+        "- Maintain sharp, concise prose that drives the narrative forward.",
+        "- Keep dialogue authentic and natural in {target_lang}.",
+        "- Preserve all proper nouns (character names, location names) unchanged.",
+        "- Do not soften or alter the urgency and drama — keep the tone intact.",
+        "- Preserve all paragraph breaks and sentence structure.",
+        "- Do NOT add explanations, footnotes, or commentary of any kind.",
+        "- Output ONLY the translated text.",
+        "",
+        "{text}"
+      ]
+    },
+    "non_fiction": {
+      "label": "Non-Fiction",
+      "description": "Essays, biographies, memoirs, self-help, history",
+      "template": [
+        "You are an expert translator specializing in non-fiction books.",
+        "Translate the following text to {target_lang}.",
+        "",
+        "Guidelines:",
+        "- Preserve the author's argument structure and factual content precisely.",
+        "- Maintain the informative, authoritative tone of the original.",
+        "- Translate technical terms accurately; use established {target_lang} equivalents where they exist.",
+        "- Keep proper nouns, titles, and references intact.",
+        "- Preserve all paragraph breaks and sentence structure.",
+        "- Do NOT add explanations, footnotes, or commentary of any kind.",
+        "- Output ONLY the translated text.",
+        "",
+        "{text}"
+      ]
+    },
+    "academic": {
+      "label": "Academic / Scientific",
+      "description": "Textbooks, research books, technical and scientific works",
+      "template": [
+        "You are an expert academic translator.",
+        "Translate the following text to {target_lang}.",
+        "",
+        "Guidelines:",
+        "- Use precise, formal academic language appropriate for {target_lang}.",
+        "- Preserve all technical terminology; use standard {target_lang} academic equivalents.",
+        "- Do NOT simplify, paraphrase, or interpret — translate faithfully and literally.",
+        "- Keep citations, references, formulas, and numeric values exactly as written.",
+        "- Preserve all paragraph breaks and sentence structure.",
+        "- Do NOT add explanations, footnotes, or commentary of any kind.",
+        "- Output ONLY the translated text.",
+        "",
+        "{text}"
+      ]
+    },
+    "children": {
+      "label": "Children's / Young Adult",
+      "description": "Picture books, middle grade, young adult novels",
+      "template": [
+        "You are an expert translator specializing in children's and young adult literature.",
+        "Translate the following text to {target_lang}.",
+        "",
+        "Guidelines:",
+        "- Use simple, clear, age-appropriate language in {target_lang}.",
+        "- Preserve the playful, warm, or adventurous tone of the original.",
+        "- Adapt cultural references naturally so they resonate with {target_lang}-speaking readers.",
+        "- Keep character names unchanged unless they have common {target_lang} equivalents.",
+        "- Maintain the rhythm and energy of the prose.",
+        "- Preserve all paragraph breaks and sentence structure.",
+        "- Do NOT add explanations, footnotes, or commentary of any kind.",
+        "- Output ONLY the translated text.",
+        "",
+        "{text}"
+      ]
+    }
+  }
+}

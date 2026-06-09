@@ -97,6 +97,19 @@ To use the local AI translation feature, you must have **Ollama** installed on y
 5. The translation process will start, and the progress can be tracked in the console.
 6. Once the translation is complete, the output file will be saved under the `outputs/` folder with the name `<original_name>_translated_<target_lang>.txt`.
 
+### 3. Genre-Specific Prompt Customization
+To improve translation quality for different book types, you can customize or add new prompt templates in `config.json`.
+By default, the following genres are available:
+- **Fiction / Novel (`fiction`)**: Tailored for literary prose and dialogue authenticity.
+- **Fantasy / Sci-Fi (`fantasy_scifi`)**: Keeps invented proper nouns and jargon intact.
+- **Mystery / Thriller (`mystery_thriller`)**: Optimizes for suspense and pacing.
+- **Non-Fiction (`non_fiction`)**: Keeps argument structures and terms authoritative.
+- **Academic / Scientific (`academic`)**: Focuses on precise terminology and formal tone.
+- **Children's / YA (`children`)**: Uses clear, age-appropriate language.
+
+You can modify these templates or add your own in `config.json` under `prompt_templates`.
+
+
 ---
 
 # Türkçe: HTML Metin Ayıklayıcı, Birleştirici ve Çevirici
@@ -189,3 +202,16 @@ Yerel yapay zeka çevirisini kullanabilmek için bilgisayarınızda **Ollama** k
 4. Kullanmak istediğiniz Ollama modelini girin (Varsayılan: `llama3`).
 5. Çeviri işlemi başlayacak ve ilerleme durumu konsoldan takip edilebilecektir.
 6. Çeviri tamamlandığında çıktı dosyanız `outputs/` klasörü altına `<orijinal_isim>_translated_<hedef_dil>.txt` adıyla kaydedilecektir.
+
+### 3. Kitap Türüne Özel Prompt Kişiselleştirme
+Farklı kitap türlerinde en iyi çeviri kalitesini elde etmek için `config.json` içerisindeki prompt şablonlarını özelleştirebilir veya yenilerini ekleyebilirsiniz.
+Varsayılan olarak aşağıdaki türler mevcuttur:
+- **Fiction / Novel (`fiction`)**: Edebi anlatım ve diyalog doğallığına odaklanır.
+- **Fantasy / Sci-Fi (`fantasy_scifi`)**: Kurgusal özel adları, terimleri ve büyü isimlerini çevirmeden korur.
+- **Mystery / Thriller (`mystery_thriller`)**: Gerilim, tempo ve sürükleyici dile göre optimize edilmiştir.
+- **Non-Fiction (`non_fiction`)**: Bilgi verici, otoriter ve argüman odaklı bir dil kullanır.
+- **Academic / Scientific (`academic`)**: Resmi akademik jargon, formüller ve atıflar için hassastır.
+- **Children's / YA (`children`)**: Yaş grubuna uygun, sıcak ve akıcı bir dil tercih eder.
+
+Bu şablonları `config.json` dosyasındaki `prompt_templates` kısmından değiştirebilir veya kendi şablonlarınızı ekleyebilirsiniz.
+
