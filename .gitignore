@@ -1,0 +1,25 @@
+# Python bytecode / cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Project data folders (Ignore input sources and generated outputs)
+html_source/
+outputs/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE specific configurations
+.vscode/
+.idea/
+*.swp
+*.swo
