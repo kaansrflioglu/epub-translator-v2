@@ -26,14 +26,14 @@ class OllamaTranslator:
     - Graceful Ctrl+C handling: saves partial translation with a clear notice
     """
 
-    def __init__(self, model: str = None, base_url: str = None, genre: str = None):
+    def __init__(self, model: str = None, base_url: str = None, genre: str = None, custom_prompt: str = None):
         config = self._load_config()
         ollama_config = config.get("ollama", {})
 
         self.model = model if model is not None else ollama_config.get("model", "llama3")
 
         configured_url = base_url if base_url is not None else ollama_config.get("api_url", "http://localhost:11434")
-        self.api_url = configured_url.rstrip("/") + "/api/generate"
+        self.api_url = configured_url.rstrip("/") + "/api/chat"
 
         self.temperature = ollama_config.get("temperature", 0.3)
         self.repeat_penalty = ollama_config.get("repeat_penalty", 1.15)
@@ -66,6 +66,9 @@ class OllamaTranslator:
             self.prompt_template = raw_template
         else:
             self.prompt_template = _default
+
+        if custom_prompt:
+            self.prompt_template += f"\n- Additional User Guidelines: {custom_prompt}"
 
     # ------------------------------------------------------------------
     # Public API
@@ -141,23 +144,26 @@ class OllamaTranslator:
 
     def translate_chunk(self, text: str, target_lang: str = "English") -> str:
         """
-        Sends a single text chunk to Ollama and returns the translated string.
-        - Uses str.replace() for prompt building to safely handle { } in source text.
+        Sends a single text chunk to Ollama using the chat API and returns the translated string.
+        - Uses system prompt for guidelines and user prompt for source text.
         - Retries up to 2 times on empty response before falling back to original.
         - Strips <think>...</think> reasoning blocks (qwen3, deepseek-r1, etc.)
         - Raises requests.RequestException on network/server errors.
         """
-        # Use str.replace() instead of .format() so curly braces in source text
-        # don't cause KeyError/IndexError crashes.
-        prompt = (
+        # Clean the system prompt by removing any text placeholder
+        system_content = (
             self.prompt_template
             .replace("{target_lang}", target_lang)
-            .replace("{text}", text)
+            .replace("{text}", "")
+            .strip()
         )
 
         payload = {
             "model": self.model,
-            "prompt": prompt,
+            "messages": [
+                {"role": "system", "content": system_content},
+                {"role": "user", "content": text}
+            ],
             "stream": False,
             "options": {
                 "repeat_penalty": self.repeat_penalty,
@@ -170,7 +176,7 @@ class OllamaTranslator:
             response = requests.post(self.api_url, json=payload, timeout=self.timeout)
             response.raise_for_status()
             data = response.json()
-            raw = data.get("response", "").strip()
+            raw = data.get("message", {}).get("content", "").strip()
 
             # Strip reasoning blocks (<think>...</think>) emitted by models like qwen3
             cleaned = _THINK_TAG_PATTERN.sub("", raw).strip()

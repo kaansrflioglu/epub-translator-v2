@@ -65,6 +65,16 @@ def ask_genre(prompt_templates: dict, default_genre: str = "fiction") -> str:
         print("  Invalid input — please enter a number from the list.")
 
 
+def ask_custom_prompt() -> str:
+    """Prompts the user to optionally add custom translation instructions."""
+    ans = input("\nWould you like to add custom translation instructions? [y/N]: ").strip().lower()
+    if ans == "y":
+        print("\nEnter your custom instructions (e.g. 'Translate \"...\" as \"...\"'):")
+        custom = input("> ").strip()
+        return custom
+    return ""
+
+
 def build_output_path(outputs_dir: str, source_name: str, target_lang: str) -> str:
     """
     Derives the output file path for a translation.
@@ -130,6 +140,7 @@ def main():
     prompt_templates = config.get("prompt_templates", {})
     default_genre = config.get("default_genre", "fiction")
     genre = ask_genre(prompt_templates, default_genre)
+    custom_prompt = ask_custom_prompt()
 
     output_path = build_output_path(outputs_dir, chosen_name, target_lang)
 
@@ -144,7 +155,7 @@ def main():
     print(f"Input  : {input_path}")
     print(f"Output : {output_path}\n")
 
-    translator = OllamaTranslator(model=model, genre=genre)
+    translator = OllamaTranslator(model=model, genre=genre, custom_prompt=custom_prompt)
 
     try:
         total_chars = translator.translate_file(
