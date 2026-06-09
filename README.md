@@ -32,8 +32,12 @@ The project structure is designed according to a layered architecture:
 ```text
 OEBPS/
 │
-├── html_source/          <-- [Data Layer Input] Source HTML/XHTML files are placed here
-│   ├── text00000.html
+├── inputs/               <-- [Source EPUB Input] Place your EPUB files here
+│   ├── book.epub
+│   └── ...
+│
+├── html_source/          <-- [Data Layer Input] Source HTML/XHTML files are extracted/placed here
+│   ├── 0001_cover.xhtml
 │   └── ...
 │
 ├── outputs/              <-- [Data Layer Output] Merged and translated .txt files are saved here
@@ -44,10 +48,11 @@ OEBPS/
 ├── src/                  <-- [Application Logic Directory]
 │   ├── __init__.py
 │   ├── parser.py         <-- [Parsing Layer] Cleans HTML tags and redundant whitespace
-│   ├── file_handler.py   <-- [Data Access Layer] Manages file read/write and listing processes
+│   ├── file_handler.py   <-- [Data Access Layer] Manages file read/write, EPUB extraction and listing processes
 │   ├── processor.py      <-- [Business Logic Layer] Manages sentence merging and flow control
 │   └── translator.py     <-- [Translation Logic Layer] Manages file translation using the Ollama API
 │
+├── unzip_epub.py        <-- [Presentation / Entry Point] CLI script starting EPUB extraction
 ├── extract_text.py      <-- [Presentation / Entry Point] CLI script starting text extraction
 ├── translate.py         <-- [Presentation / Entry Point] CLI script starting local AI translation
 └── README.md             <-- [Documentation] Project documentation and user guide
@@ -76,16 +81,26 @@ To use the local AI translation feature, you must have **Ollama** installed on y
 
 ## How to Run
 
-### 1. Text Extraction and Merging
+### 1. EPUB Extraction (Optional / If starting from an EPUB)
 
-1. Place your source HTML, XHTML, or HTM files in the folder named `html_source` (if the directory does not exist, it will be automatically created on first run).
-2. Open a terminal in the root directory where the script is located and run:
+1. Place your `.epub` files inside the `inputs/` folder (if it doesn't exist, it will be created on first run).
+2. Open a terminal and run:
+   ```bash
+   python unzip_epub.py
+   ```
+3. An interactive menu will list the EPUB files in `inputs/`. Select the number of the file you wish to extract.
+4. The script will unzip and extract the HTML/XHTML files in the exact spine (reading) order into the `html_source/` directory, naming them sequentially (e.g. `0001_cover.xhtml`, `0002_ch01.xhtml`).
+
+### 2. Text Extraction and Merging
+
+1. Ensure your source HTML, XHTML, or HTM files are in the `html_source/` folder (either extracted via the step above or placed manually).
+2. Run:
    ```bash
    python extract_text.py
    ```
 3. Once completed, your merged text file will be ready in the `outputs/` folder.
 
-### 2. Translating with Local AI
+### 3. Translating with Local AI
 
 1. Run the following command in your terminal:
    ```bash
@@ -97,7 +112,7 @@ To use the local AI translation feature, you must have **Ollama** installed on y
 5. The translation process will start, and the progress can be tracked in the console.
 6. Once the translation is complete, the output file will be saved under the `outputs/` folder with the name `<original_name>_translated_<target_lang>.txt`.
 
-### 3. Genre-Specific Prompt Customization
+### 4. Genre-Specific Prompt Customization
 To improve translation quality for different book types, you can customize or add new prompt templates in `config.json`.
 By default, the following genres are available:
 - **Fiction / Novel (`fiction`)**: Tailored for literary prose and dialogue authenticity.
@@ -138,8 +153,12 @@ Katmanlı mimariye uygun geliştirilmiş proje yapısı şu şekildedir:
 ```text
 OEBPS/
 │
-├── html_source/          <-- [Veri Katmanı Giriş] HTML/XHTML kaynak dosyaları buraya konur
-│   ├── text00000.html
+├── inputs/               <-- [Kaynak EPUB Girişi] EPUB dosyalarınızı buraya yerleştirin
+│   ├── book.epub
+│   └── ...
+│
+├── html_source/          <-- [Veri Katmanı Giriş] HTML/XHTML kaynak dosyaları buraya ayıklanır/konur
+│   ├── 0001_cover.xhtml
 │   └── ...
 │
 ├── outputs/              <-- [Veri Katmanı Çıkış] Birleştirilen ve çevrilen .txt dosyaları buraya kaydedilir
@@ -150,10 +169,11 @@ OEBPS/
 ├── src/                  <-- [Uygulama Mantığı Klasörü]
 │   ├── __init__.py
 │   ├── parser.py         <-- [Ayrıştırma Katmanı] HTML etiketlerini ve özel boşlukları temizler
-│   ├── file_handler.py   <-- [Veri Erişim Katmanı] Dosya okuma/yazma ve listeleme işlemlerini yürütür
+│   ├── file_handler.py   <-- [Veri Erişim Katmanı] Dosya okuma/yazma, EPUB ayıklama ve listeleme işlemlerini yürütür
 │   ├── processor.py      <-- [İş Mantığı Katmanı] Cümle birleştirme ve akış kontrolünü yönetir
 │   └── translator.py     <-- [Çeviri Mantığı Katmanı] Ollama API'si ile dosya çevirisini yönetir
 │
+├── unzip_epub.py        <-- [Sunum / Giriş Noktası] EPUB ayıklamayı başlatan CLI betiği
 ├── extract_text.py      <-- [Sunum / Giriş Noktası] Metin ayıklamayı başlatan CLI betiği
 ├── translate.py         <-- [Sunum / Giriş Noktası] Yerel yapay zeka çevirisini başlatan CLI betiği
 └── README.md             <-- [Dökümantasyon] Proje kullanım dökümanı
@@ -182,16 +202,26 @@ Yerel yapay zeka çevirisini kullanabilmek için bilgisayarınızda **Ollama** k
 
 ## Nasıl Çalıştırılır?
 
-### 1. Metin Ayıklama ve Birleştirme
+### 1. EPUB Ayıklama (İsteğe Bağlı / Eğer EPUB dosyasından başlıyorsanız)
 
-1. Kaynak HTML, XHTML veya HTM dosyalarınızı `html_source` isimli klasörün içine yerleştirin (klasör yoksa ilk çalıştırmada otomatik oluşacaktır).
-2. Betiğin bulunduğu kök dizinde bir terminal açın ve aşağıdaki komutu çalıştırın:
+1. `.epub` uzantılı dosyalarınızı `inputs/` klasörüne yerleştirin (klasör yoksa ilk çalıştırmada otomatik oluşturulur).
+2. Bir terminal açın ve şu komutu çalıştırın:
+   ```bash
+   python unzip_epub.py
+   ```
+3. Çıkan menüde `inputs/` klasöründeki EPUB dosyaları listelenecektir. Çevirmek istediğiniz dosyanın numarasını seçin.
+4. Dosyalar, kitap okuma sırasına (spine) uygun olarak `html_source/` dizinine sıralı ön eklerle (örn: `0001_cover.xhtml`, `0002_ch01.xhtml`) otomatik olarak çıkartılacaktır.
+
+### 2. Metin Ayıklama ve Birleştirme
+
+1. Kaynak HTML, XHTML veya HTM dosyalarınızın `html_source` klasörünün içinde olduğundan emin olun (üstteki adımda çıkarılanlar veya elle yerleştirilenler).
+2. Aşağıdaki komutu çalıştırın:
    ```bash
    python extract_text.py
    ```
 3. İşlem tamamlandığında, `outputs/` klasörü içinde birleştirilmiş metin dosyanız hazır olacaktır.
 
-### 2. Yerel Yapay Zeka ile Çeviri Yapma
+### 3. Yerel Yapay Zeka ile Çeviri Yapma
 
 1. Terminalde şu komutu çalıştırın:
    ```bash
@@ -203,7 +233,7 @@ Yerel yapay zeka çevirisini kullanabilmek için bilgisayarınızda **Ollama** k
 5. Çeviri işlemi başlayacak ve ilerleme durumu konsoldan takip edilebilecektir.
 6. Çeviri tamamlandığında çıktı dosyanız `outputs/` klasörü altına `<orijinal_isim>_translated_<hedef_dil>.txt` adıyla kaydedilecektir.
 
-### 3. Kitap Türüne Özel Prompt Kişiselleştirme
+### 4. Kitap Türüne Özel Prompt Kişiselleştirme
 Farklı kitap türlerinde en iyi çeviri kalitesini elde etmek için `config.json` içerisindeki prompt şablonlarını özelleştirebilir veya yenilerini ekleyebilirsiniz.
 Varsayılan olarak aşağıdaki türler mevcuttur:
 - **Fiction / Novel (`fiction`)**: Edebi anlatım ve diyalog doğallığına odaklanır.
